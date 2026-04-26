@@ -1,0 +1,952 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Arch Garden AI — Plan 35 días</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap');
+  :root{
+    --verde:#2D4A3E;--verde2:#3d6554;--dorado:#C9A84C;--dorado2:#e8c96a;
+    --hueso:#DDE0DD;--rojo:#FF6B6B;--menta:#4ADE80;
+    --bg:#192820;--card:#223a30;--card2:#1c3028;--borde:rgba(255,255,255,0.07);
+    --txt:#DDE0DD;--soft:#8aab9a;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'DM Sans',sans-serif;background:#192820;color:#DDE0DD;min-height:100vh;}
+
+  .hdr{background:var(--verde);padding:13px 18px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(201,168,76,.25);position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,0.1);}
+  .logo{display:flex;align-items:center;gap:9px;}
+  .logo-ic{width:28px;height:28px;background:var(--dorado);border-radius:7px;display:grid;place-items:center;font-size:14px;}
+  .logo-nm{font-family:'DM Serif Display',serif;font-size:16px;color:#DDE0DD;}
+  .logo-nm span{color:var(--dorado);}
+  .hdr-r{display:flex;gap:8px;}
+  .pill{background:rgba(201,168,76,.15);border:1px solid rgba(201,168,76,.3);border-radius:20px;padding:3px 10px;font-size:11px;color:#e8c96a;font-weight:500;}
+
+  .tabs{background:#1c3028;display:flex;border-bottom:1px solid rgba(255,255,255,0.07);overflow-x:auto;scrollbar-width:none;}
+  .tabs::-webkit-scrollbar{display:none;}
+  .tab{padding:12px 16px;font-size:13px;font-weight:500;color:#8aab9a;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all .2s;}
+  .tab.on{color:var(--dorado);border-bottom-color:var(--dorado);font-weight:600;}
+  .tab:hover:not(.on){color:var(--hueso);}
+
+  .main{padding:18px;max-width:860px;margin:0 auto;}
+  .view{display:none;}.view.on{display:block;}
+
+  /* TODAY BANNER */
+  .tbanner{background:linear-gradient(135deg,var(--verde2),var(--verde));border-radius:13px;padding:16px 18px;margin-bottom:16px;border:none;box-shadow:0 4px 16px rgba(45,74,62,0.2);display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;}
+  .tday{font-family:'DM Serif Display',serif;font-size:19px;color:#ffffff;}
+  .tfase{font-size:12px;color:#e8d9a0;margin-top:3px;font-weight:500;}
+  .tpct{font-size:28px;font-weight:700;color:#ffffff;line-height:1;}
+  .tsub{font-size:10px;color:rgba(255,255,255,0.65);margin-top:2px;text-align:right;}
+
+  /* TASK GROUP */
+  .tg{margin-bottom:16px;}
+  .gh{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:#8aab9a;padding:7px 0;border-bottom:1px solid rgba(255,255,255,0.07);margin-bottom:7px;display:flex;justify-content:space-between;align-items:center;}
+  .gc{font-size:10px;background:rgba(255,255,255,.06);border-radius:8px;padding:2px 7px;color:#8aab9a;}
+
+  /* TASK ITEM */
+  .ti{background:#223a30;border-radius:10px;padding:11px 13px;margin-bottom:6px;border:1px solid rgba(255,255,255,0.07);display:flex;align-items:flex-start;gap:10px;transition:all .2s;}
+  .ti:hover{border-color:rgba(201,168,76,0.35);box-shadow:0 2px 8px rgba(0,0,0,0.2);transform:translateY(-1px);}
+  .ti.dn{opacity:.38;background:#1a2e26;}.ti.dn .tn{text-decoration:line-through;color:#6a8a7a;}
+
+  .cb{width:19px;height:19px;border-radius:5px;border:2px solid rgba(255,255,255,.35);display:grid;place-items:center;flex-shrink:0;cursor:pointer;transition:all .2s;margin-top:2px;}
+  .cb.on{background:#4ADE80;border-color:#4ADE80;}
+  .cb .ck{display:none;font-size:10px;font-weight:800;color:#192820;}
+  .cb.on .ck{display:block;}
+
+  .tb2{flex:1;min-width:0;}
+  .tn{font-size:13px;font-weight:500;color:#DDE0DD;line-height:1.45;margin-bottom:5px;}
+  .tags{display:flex;gap:4px;flex-wrap:wrap;}
+  .tag{font-size:10px;font-weight:600;padding:2px 6px;border-radius:4px;}
+  .tc{background:rgba(201,168,76,.25);color:#e8c96a;}
+  .td{background:rgba(100,149,237,.25);color:#a0c0f0;}
+  .ta{background:rgba(255,107,107,.25);color:#ff9090;}
+  .tm{background:rgba(255,255,255,.1);color:#aacaaa;}
+  .ts{background:rgba(74,222,128,.25);color:#70ee90;}
+  .nt{font-size:11px;color:#9abcaa;margin-top:4px;padding:4px 7px;background:rgba(255,255,255,.07);border-radius:5px;border-left:2px solid rgba(201,168,76,.6);}
+  .nb{background:none;border:none;cursor:pointer;font-size:13px;color:rgba(255,255,255,.4);opacity:.7;transition:opacity .2s;flex-shrink:0;}
+  .nb:hover{opacity:1;}
+  .ti.manana{border-left:3px solid #C9A84C;background:#3a3a20;}
+  .tag-m{background:rgba(201,168,76,.25);color:#e8c96a;}
+  .ti.enproceso{border-left:3px solid #6495ed;background:#283d54;}
+  .ti.enproceso .tn{color:var(--hueso);}
+  .tag-ep{background:rgba(100,149,237,.25);color:#a0c0f0;}
+  .cb3{width:19px;height:19px;border-radius:5px;border:2px solid rgba(100,149,237,0.6);background:rgba(100,149,237,0.15);display:grid;place-items:center;flex-shrink:0;cursor:pointer;transition:all .2s;margin-top:2px;font-size:9px;color:#7ab4f0;font-weight:700;}
+  .estado-btns{display:flex;gap:4px;margin-top:6px;}
+  .ebtn{font-size:10px;padding:3px 8px;border-radius:5px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:600;transition:all .2s;}
+  .ebtn-p{background:rgba(255,255,255,0.08);color:#aacaaa;}
+  .ebtn-ep{background:rgba(100,149,237,0.2);color:#a0c0f0;}
+  .ebtn-dn{background:rgba(74,222,128,0.2);color:#70ee90;}
+  .ebtn-p:hover{background:rgba(255,255,255,0.15);}
+  .ebtn-ep:hover{background:rgba(100,149,237,0.35);}
+  .ebtn-dn:hover{background:rgba(74,222,128,0.35);}
+
+  /* CALENDAR */
+  .cnr{display:flex;justify-content:space-between;align-items:center;margin-bottom:13px;}
+  .cmt{font-family:'DM Serif Display',serif;font-size:18px;color:#DDE0DD;}
+  .cbts{display:flex;gap:5px;}
+  .bsm{background:#223a30;border:1px solid rgba(255,255,255,.1);border-radius:7px;padding:5px 10px;color:#DDE0DD;cursor:pointer;font-size:12px;font-family:'DM Sans',sans-serif;font-weight:500;transition:all .2s;}
+  .bsm:hover{border-color:var(--dorado);color:var(--dorado);}
+
+  .cgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;}
+  .ch{text-align:center;font-size:10px;font-weight:600;color:#8aab9a;padding:5px 0;text-transform:uppercase;letter-spacing:.5px;}
+  .cc{background:#223a30;border-radius:8px;padding:6px 4px;min-height:62px;border:1px solid rgba(255,255,255,0.06);cursor:pointer;transition:all .2s;}
+  .cc:hover{border-color:rgba(201,168,76,.3);}
+  .cc.ct{border-color:var(--dorado);background:rgba(201,168,76,.08);}
+  .cc.ci{opacity:.22;pointer-events:none;}
+  .cc.cn{pointer-events:none;opacity:.35;}
+  .cn2{font-size:11px;font-weight:600;text-align:center;color:#DDE0DD;margin-bottom:3px;}
+  .cc.ct .cn2{color:var(--dorado);font-weight:700;}
+  .cbdg{font-size:9px;font-weight:700;text-align:center;padding:2px 3px;border-radius:3px;margin-bottom:2px;}
+  .cmp{height:3px;background:rgba(255,255,255,.07);border-radius:2px;overflow:hidden;margin-top:2px;}
+  .cmf{height:100%;border-radius:2px;transition:width .3s;}
+  .ctc{font-size:9px;color:#8aab9a;text-align:center;}
+
+  /* FILTERS */
+  .frow{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:14px;}
+  .fbtn{background:#223a30;border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:4px 11px;font-size:12px;font-weight:500;color:#8aab9a;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;}
+  .fbtn.on{background:var(--dorado);border-color:var(--dorado);color:#192820;font-weight:700;}
+  .fbtn:hover:not(.on){color:#DDE0DD;border-color:rgba(255,255,255,.2);}
+
+  /* METRICS */
+  .mg{display:grid;grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:9px;margin-bottom:16px;}
+  .mc{background:#223a30;border-radius:10px;padding:13px;border:1px solid rgba(255,255,255,0.07);}
+  .ml{font-size:10px;text-transform:uppercase;letter-spacing:.6px;font-weight:600;color:#8aab9a;margin-bottom:6px;}
+  .mi{font-size:25px;font-weight:700;color:var(--dorado);background:none;border:none;outline:none;width:100%;font-family:'DM Sans',sans-serif;}
+  .ms{font-size:10px;color:#8aab9a;margin-top:2px;}
+
+  /* PROGRESS */
+  .pc{background:#223a30;border-radius:13px;padding:16px 18px;margin-bottom:16px;border:1px solid rgba(255,255,255,0.07);}
+  .pr{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:9px;}
+  .plb{font-size:12px;color:#8aab9a;font-weight:500;}
+  .pv{font-size:24px;font-weight:700;color:var(--dorado);}
+  .pt{height:6px;background:rgba(255,255,255,.07);border-radius:3px;overflow:hidden;}
+  .pf{height:100%;background:linear-gradient(90deg,var(--dorado),var(--dorado2));border-radius:3px;transition:width .5s;}
+  .ps{display:flex;justify-content:space-between;margin-top:6px;font-size:10px;color:#8aab9a;}
+
+  /* MODAL */
+  .ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:300;backdrop-filter:blur(4px);align-items:flex-end;justify-content:center;}
+  .ov.on{display:flex;}
+  .mo{background:#223a30;border-radius:17px 17px 0 0;padding:20px 18px;width:100%;max-width:620px;max-height:88vh;overflow-y:auto;border-top:1px solid rgba(201,168,76,.2);animation:up .25s ease;}
+  @keyframes up{from{transform:translateY(14px);opacity:0;}to{transform:translateY(0);opacity:1;}}
+  .mh{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;}
+  .mt2{font-family:'DM Serif Display',serif;font-size:16px;color:#DDE0DD;}
+  .mx{background:rgba(255,255,255,.07);border:none;border-radius:6px;padding:4px 8px;color:#8aab9a;cursor:pointer;font-size:14px;font-family:'DM Sans',sans-serif;}
+  .nta{width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:9px;padding:10px 12px;color:#DDE0DD;font-family:'DM Sans',sans-serif;font-size:13px;resize:vertical;min-height:85px;outline:none;margin-top:9px;}
+  .nta:focus{border-color:var(--dorado);}
+  .sb{background:var(--dorado);color:#192820;border:none;border-radius:9px;padding:9px 18px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;cursor:pointer;width:100%;margin-top:9px;}
+  .sb:hover{background:var(--dorado2);}
+
+  .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(70px);background:var(--dorado);color:#192820;padding:8px 16px;border-radius:20px;font-size:12px;font-weight:700;z-index:999;transition:transform .3s;pointer-events:none;}
+  .toast.on{transform:translateX(-50%) translateY(0);}
+  .empty{text-align:center;padding:36px 18px;color:#8aab9a;font-size:13px;}
+  .ti.alta{background:#ffffff;border:1px solid rgba(255,255,255,0.15);box-shadow:0 2px 10px rgba(0,0,0,0.2);}
+  .ti.alta .tn{color:#1a2e26;}
+  .ti.alta .nb{color:rgba(45,74,62,0.4);}
+  .ti.alta .nt{color:#5a7a6a;background:rgba(45,74,62,0.05);border-left-color:rgba(45,74,62,0.4);}
+  .ti.alta .ebtn-p{background:rgba(0,0,0,0.05);color:#5a7a6a;}
+  .ti.alta .ebtn-ep{background:rgba(74,126,212,0.12);color:#3a6ab8;}
+  .ti.alta .ebtn-dn{background:rgba(45,156,90,0.12);color:#1e7a48;}
+  .ti.alta .ebtn-p:hover{background:rgba(0,0,0,0.1);}
+  .ti.alta:hover{border-color:rgba(201,168,76,0.4);box-shadow:0 4px 14px rgba(0,0,0,0.25);transform:translateY(-1px);}
+  .ti.alta .tag{opacity:0.85;}
+  .add-btn{position:fixed;bottom:24px;right:20px;background:#2D4A3E;color:#DDE0DD;border:none;border-radius:50px;padding:12px 20px;font-size:14px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;box-shadow:0 4px 16px rgba(45,74,62,0.35);transition:all .2s;z-index:50;display:flex;align-items:center;gap:6px;}
+  .add-btn:hover{background:#3d6554;transform:translateY(-2px);box-shadow:0 6px 20px rgba(45,74,62,0.4);}
+  .form-group{margin-bottom:12px;}
+  .form-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.6px;color:#8aab9a;margin-bottom:5px;display:block;}
+  .form-select{width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:8px 10px;color:#DDE0DD;font-family:'DM Sans',sans-serif;font-size:13px;outline:none;appearance:none;}
+  .form-select:focus{border-color:var(--dorado);}
+  .ti-custom{background:#2D4A3E;border:1px solid rgba(201,168,76,0.3);}
+  .tag-custom{background:rgba(201,168,76,.25);color:#e8c96a;}
+
+  @media(max-width:480px){
+    .main{padding:12px;}
+    .cgrid{gap:2px;}
+    .cc{min-height:50px;padding:4px 2px;}
+    .cbdg{display:none;}
+    .mg{grid-template-columns:repeat(2,1fr);}
+    .hdr-r .pill:last-child{display:none;}
+  }
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="logo">
+    <div class="logo-ic">🌿</div>
+    <div class="logo-nm">Arch Garden <span>AI</span></div>
+  </div>
+  <div class="hdr-r">
+    <div class="pill" id="hDay">Día 1/35</div>
+    <div class="pill" id="hPct">0%</div>
+    <div class="pill" style="cursor:pointer;background:rgba(255,107,107,0.15);border-color:rgba(255,107,107,0.3);color:#ff8888;" onclick="resetDia()">↩ Reiniciar</div>
+  </div>
+</div>
+
+<div class="tabs">
+  <div class="tab on" onclick="showTab('hoy',this)">📅 Hoy</div>
+  <div class="tab" onclick="showTab('cal',this)">🗓 Calendario</div>
+  <div class="tab" onclick="showTab('list',this)">✅ Tareas</div>
+  <div class="tab" onclick="showTab('met',this)">📊 Métricas</div>
+</div>
+
+<div class="main">
+
+  <div class="view on" id="v-hoy">
+    <div class="tbanner">
+      <div><div class="tday" id="tDay">—</div><div class="tfase" id="tFase">—</div></div>
+      <div><div class="tpct" id="tPct">0%</div><div class="tsub">completado hoy</div></div>
+    </div>
+    <div id="hoyC"></div>
+  </div>
+
+  <div class="view" id="v-cal">
+    <div class="cnr">
+      <div class="cmt" id="calTit">Sem 1 (Días 1-7)</div>
+      <div class="cbts">
+        <button class="bsm" onclick="pMo()">←</button>
+        <button class="bsm" onclick="gNow()">Hoy</button>
+        <button class="bsm" onclick="nMo()">→</button>
+      </div>
+    </div>
+    <div class="cgrid" id="calG">
+      <div class="ch">L</div><div class="ch">M</div><div class="ch">X</div>
+      <div class="ch">J</div><div class="ch">V</div><div class="ch">S</div><div class="ch">D</div>
+    </div>
+    <div style="display:flex;gap:7px;flex-wrap:wrap;margin-top:12px;">
+      <span class="tag tc">F1 Rescate</span>
+      <span class="tag td">F2 Conversión</span>
+      <span class="tag ta">F3 Amplificación</span>
+      <span class="tag ts">F4 B2B</span>
+      <span class="tag" style="background:rgba(200,100,200,.18);color:#d47ad4;">F5 Cierre</span>
+    </div>
+  </div>
+
+  <div class="view" id="v-list">
+    <div class="frow">
+      <button class="fbtn on" onclick="setF('all',this)">Todas</button>
+      <button class="fbtn" onclick="setF('CEO',this)">🎩 CEO</button>
+      <button class="fbtn" onclick="setF('DEV',this)">💻 Dev</button>
+      <button class="fbtn" onclick="setF('p',this)">Pendientes</button>
+      <button class="fbtn" onclick="setF('d',this)">✅ Hechas</button>
+      <button class="fbtn" onclick="setF('m',this)">🌅 Mañana</button>
+      <button class="fbtn" onclick="setF('ep',this)">🔄 En proceso</button>
+    </div>
+    <div id="listC"></div>
+  </div>
+
+  <div class="view" id="v-met">
+    <div style="font-family:'DM Serif Display',serif;font-size:18px;margin-bottom:14px;color:#DDE0DD;">Métricas del mes</div>
+    <div class="pc">
+      <div class="pr"><span class="plb">Progreso del plan</span><span class="pv" id="mPct">0%</span></div>
+      <div class="pt"><div class="pf" id="mFill" style="width:0"></div></div>
+      <div class="ps"><span>21 Abr</span><span id="mTar">—</span><span>25 May</span></div>
+    </div>
+    <div class="mg">
+      <div class="mc"><div class="ml">Freemium registrados</div><input class="mi" id="k1" type="number" value="0" min="0" onchange="sM('k1',this.value)"><div class="ms">Meta: 80-100</div></div>
+      <div class="mc"><div class="ml">Clientes pagando</div><input class="mi" id="k2" type="number" value="0" min="0" onchange="sM('k2',this.value)"><div class="ms">Meta: 30+</div></div>
+      <div class="mc"><div class="ml">Ingresos USD</div><input class="mi" id="k3" type="number" value="0" min="0" onchange="sM('k3',this.value)" style="font-size:21px"><div class="ms">Meta: $500-900</div></div>
+      <div class="mc"><div class="ml">Videos publicados</div><input class="mi" id="k4" type="number" value="0" min="0" onchange="sM('k4',this.value)"><div class="ms">Meta: 60+</div></div>
+      <div class="mc"><div class="ml">DMs enviados</div><input class="mi" id="k5" type="number" value="0" min="0" onchange="sM('k5',this.value)"><div class="ms">Meta: 400+</div></div>
+      <div class="mc"><div class="ml">B2B en pipeline</div><input class="mi" id="k6" type="number" value="0" min="0" onchange="sM('k6',this.value)"><div class="ms">Meta: 2+</div></div>
+      <div class="mc"><div class="ml">Beta activos</div><input class="mi" id="k7" type="number" value="3" min="0" onchange="sM('k7',this.value)"><div class="ms">Base: 3</div></div>
+      <div class="mc"><div class="ml">Mejoras UX dev</div><input class="mi" id="k8" type="number" value="0" min="0" onchange="sM('k8',this.value)"><div class="ms">Meta: 15+</div></div>
+    </div>
+
+    <div style="font-family:'DM Serif Display',serif;font-size:16px;margin:22px 0 10px 0;color:#DDE0DD;">💾 Respaldo de tu progreso</div>
+    <div style="background:#223a30;border-radius:10px;padding:14px;border:1px solid rgba(255,255,255,0.07);">
+      <div style="font-size:12px;color:#8aab9a;margin-bottom:10px;line-height:1.5;">Exporta tu progreso semanalmente como respaldo. Si cambias de dispositivo o navegador, podrás recuperarlo importando el archivo .json.</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="bsm" onclick="exportJSON()" style="background:rgba(74,222,128,0.15);border-color:rgba(74,222,128,0.4);color:#70ee90;">⬇️ Exportar respaldo (.json)</button>
+        <button class="bsm" onclick="document.getElementById('imp').click()" style="background:rgba(100,149,237,0.15);border-color:rgba(100,149,237,0.4);color:#a0c0f0;">⬆️ Importar respaldo</button>
+        <input type="file" id="imp" accept=".json" style="display:none;" onchange="importJSON(event)">
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<button class="add-btn" onclick="openAddTask()">＋ Nueva tarea</button>
+
+<div class="ov" id="ov" onclick="mClose(event)">
+  <div class="mo"><div class="mh"><div class="mt2" id="mTit">—</div><button class="mx" onclick="closeM()">✕</button></div><div id="mBod"></div></div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const T=[
+{d:1,dt:'2026-04-21',f:'Fase 1 · Rescate',r:'CEO',p:'Alta',t:'Abrir el panel admin de Arch Garden y revisar la actividad de los 13 beta users: quién entró, cuándo fue la última vez, cuántos créditos usó cada uno',m:true},
+{d:1,dt:'2026-04-21',f:'Fase 1 · Rescate',r:'CEO',p:'Alta',t:'Crear un spreadsheet con los 13 beta: nombre, canal de contacto (Instagram / WhatsApp / email), fecha del último mensaje enviado y estado actual (activo / dormido / sin respuesta)',m:true},
+{d:1,dt:'2026-04-21',f:'Fase 1 · Rescate',r:'CEO',p:'Alta',t:'Enviar mensaje de rescate personalizado por Instagram DM a los dormidos #1, #2 y #3 — usar el template corto: "¿sigues queriendo probar o libero tu cupo?"'},
+{d:1,dt:'2026-04-21',f:'Fase 1 · Rescate',r:'CEO',p:'Alta',t:'Enviar mensaje de rescate a dormidos #4, #5, #6 por su canal original (WhatsApp o email según corresponda)'},
+{d:1,dt:'2026-04-21',f:'Fase 1 · Rescate',r:'CEO',p:'Alta',t:'Enviar mensaje de rescate a dormidos #7, #8, #9 y #10'},
+{d:1,dt:'2026-04-21',f:'Fase 1 · Rescate',r:'CEO',p:'Alta',t:'Escribir a los 3 beta activos por su canal: agradecerles por probar, preguntar cómo fue la experiencia y si tuvieron algún problema técnico o de entendimiento'},
+{d:1,dt:'2026-04-21',f:'Fase 1 · Rescate',r:'CEO',p:'Alta',t:'Grabar con el iPhone el video guía de primer uso (3 min): mostrar los 5 pasos exactos, enfatizar que hay que esperar el análisis IA y llenar los 5 dropdowns antes de generar'},
+{d:1,dt:'2026-04-21',f:'Fase 1 · Rescate',r:'CEO',p:'Alta',t:'Subir el video guía a YouTube como "No listado" y copiar el link — este link irá en TODOS los mensajes de acceso desde hoy en adelante'},
+{d:1,dt:'2026-04-21',f:'Fase 1 · Rescate',r:'CEO',p:'Alta',t:'Crear grupo WhatsApp llamado "Arch Garden · Beta" e invitar a los beta activos que tengas por WhatsApp'},
+{d:1,dt:'2026-04-21',f:'Fase 1 · Rescate',r:'CEO',p:'Alta',t:'Publicar primer post LinkedIn desde @evyarchitects: historia personal de por qué construiste Arch Garden siendo arquitecta (5 años, Lumion, V-Ray, frustración con IAs que cambian el diseño)',m:true},
+{d:1,dt:'2026-04-21',f:'Fase 1 · Rescate',r:'CEO',p:'Media',t:'Responder cada comentario del post LinkedIn dentro de los primeros 30 minutos — crítico para el algoritmo'},
+{d:1,dt:'2026-04-21',f:'Fase 1 · Rescate',r:'CEO',p:'Media',t:'Enviar 10 solicitudes de conexión en LinkedIn a arquitectos LATAM con proyectos de render recientes — nota corta: "Hola, soy arquitecta en Bogotá, me gustaría conectar"'},
+{d:1,dt:'2026-04-21',f:'Fase 1 · Rescate',r:'CEO',p:'Alta',t:'Al cierre del día: revisar el panel admin junto con el dev — cuántos beta entraron hoy, cuántos renders generaron, si el modelo respondió correctamente'},
+{d:1,dt:'2026-04-21',f:'Fase 1 · Rescate',r:'DEV',p:'Alta',t:'Implementar validación en el editor: botón "Generar" deshabilitado con tooltip explicativo si hay dropdowns sin seleccionar'},
+{d:1,dt:'2026-04-21',f:'Fase 1 · Rescate',r:'DEV',p:'Alta',t:'Implementar pantalla de espera obligatoria: el editor no es accesible hasta que el análisis IA termine — mostrar barra de progreso con mensaje claro'},
+{d:1,dt:'2026-04-21',f:'Fase 1 · Rescate',r:'DEV',p:'Alta',t:'Verificar flujo completo freemium con cuenta nueva: registrarse → recibir 3 créditos → análisis IA → generar render → ver resultado'},
+{d:1,dt:'2026-04-21',f:'Fase 1 · Rescate',r:'DEV',p:'Alta',t:'Verificar flujo completo de compra con cuenta nueva: seleccionar plan → checkout → créditos acreditados automáticamente → email de confirmación recibido'},
+{d:1,dt:'2026-04-21',f:'Fase 1 · Rescate',r:'DEV',p:'Alta',t:'Deploy de todos los cambios a producción y smoke test rápido de los flujos críticos'},
+{d:1,dt:'2026-04-21',f:'Fase 1 · Rescate',r:'CEO',p:'Alta',t:'Grabar video de guía de uso correcto de Arch Garden para enviar a los usuarios que tuvieron pruebas fallidas — mostrar los 5 pasos, esperar el análisis IA y llenar los 5 dropdowns antes de generar',m:true},
+{d:1,dt:'2026-04-21',f:'Fase 1 · Rescate',r:'CEO',p:'Alta',t:'Subir el video de guía a YouTube como No listado y copiar el link — este link va en el mensaje de reactivación a cada usuario con prueba fallida',m:true},
+{d:1,dt:'2026-04-21',f:'Fase 1 · Rescate',r:'CEO',p:'Alta',t:'Enviar el video de guía a cada usuario que tuvo prueba fallida con el mensaje: "Vi que tu primer render no salió como esperabas. Fue un error del flujo, no del producto. Mira este video de 3 min y vuelve a intentarlo — te garantizo un resultado diferente"'},
+
+{d:2,dt:'2026-04-22',f:'Fase 1 · Rescate',r:'CEO',p:'Alta',t:'Revisar y categorizar las respuestas de los 13 beta en el spreadsheet: activo interesado / reactivado / no responde / ya no le interesa',m:true},
+{d:2,dt:'2026-04-22',f:'Fase 1 · Rescate',r:'CEO',p:'Alta',t:'Hacer call de 15 min con el beta activo #1 — preguntar: ¿qué parte usaste?, ¿qué te pareció el resultado?, ¿qué no funcionó o fue confuso?, ¿cuánto pagarías por esto?'},
+{d:2,dt:'2026-04-22',f:'Fase 1 · Rescate',r:'CEO',p:'Alta',t:'Hacer call de 15 min con el beta activo #2 — mismo script, grabar con permiso para revisar después'},
+{d:2,dt:'2026-04-22',f:'Fase 1 · Rescate',r:'CEO',p:'Alta',t:'Hacer call de 15 min con el beta activo #3 — anotar cada fricción mencionada textualmente para pasarla al dev hoy mismo'},
+{d:2,dt:'2026-04-22',f:'Fase 1 · Rescate',r:'CEO',p:'Alta',t:'Documentar en un archivo el feedback de las 3 calls: qué funcionó, qué no, qué le faltaría, frases textuales de los usuarios — compartirlo con el dev'},
+{d:2,dt:'2026-04-22',f:'Fase 1 · Rescate',r:'CEO',p:'Alta',t:'Grabar video cara a cámara con iPhone: "Soy arquitecta y construí la herramienta que yo misma necesitaba" — 45 segundos, natural, sin guión rígido',m:true},
+{d:2,dt:'2026-04-22',f:'Fase 1 · Rescate',r:'CEO',p:'Alta',t:'Grabar video antes/después con un proyecto propio de Evy Architects: render base vs render mejorado con Arch Garden — mismo ángulo, mismo diseño',m:true},
+{d:2,dt:'2026-04-22',f:'Fase 1 · Rescate',r:'CEO',p:'Alta',t:'Crear y publicar carrusel en LinkedIn: "7 errores que matan tus renders arquitectónicos" — último slide: Arch Garden detecta estos errores automáticamente antes de generar'},
+{d:2,dt:'2026-04-22',f:'Fase 1 · Rescate',r:'CEO',p:'Media',t:'Enviar 15 DMs personalizados en LinkedIn a arquitectos que publicaron sobre render esta semana — no vender en el primer mensaje, solo conectar y preguntar qué software usan'},
+{d:2,dt:'2026-04-22',f:'Fase 1 · Rescate',r:'CEO',p:'Alta',t:'Revisión de uso de la app con dev al cierre'},
+{d:2,dt:'2026-04-22',f:'Fase 1 · Rescate',r:'DEV',p:'Alta',t:'Implementar el fix más crítico identificado en el feedback de las calls — coordinar con Evelyn antes del mediodía cuál es'},
+{d:2,dt:'2026-04-22',f:'Fase 1 · Rescate',r:'DEV',p:'Alta',t:'Agregar banner visible en la landing: "3 créditos gratis al registrarte — sin tarjeta de crédito" con botón CTA prominente'},
+{d:2,dt:'2026-04-22',f:'Fase 1 · Rescate',r:'DEV',p:'Alta',t:'Implementar email automático de bienvenida al registrarse: link al video tutorial, los 5 pasos resumidos y el contacto directo de Evelyn'},
+{d:2,dt:'2026-04-22',f:'Fase 1 · Rescate',r:'DEV',p:'Media',t:'Crear vista básica en el panel admin: lista de usuarios con fecha de registro, créditos usados, último acceso y número de renders generados'},
+
+{d:3,dt:'2026-04-23',f:'Fase 1 · Rescate',r:'CEO',p:'Alta',t:'Hacer balance honesto de Fase 1: de los 13 beta, ¿cuántos son realmente activos o reactivados ahora? Ese número real es tu punto de partida',m:true},
+{d:3,dt:'2026-04-23',f:'Fase 1 · Rescate',r:'CEO',p:'Alta',t:'Publicar post en LinkedIn desde @evyarchitects: "Llevo 5 años siendo arquitecta. Hoy abro lo que construí." — incluir link al registro con los 3 créditos gratis',m:true},
+{d:3,dt:'2026-04-23',f:'Fase 1 · Rescate',r:'CEO',p:'Alta',t:'Adaptar ese mismo post para @archgardenai en Instagram y publicar como feed post con imagen del producto o captura de pantalla del editor'},
+{d:3,dt:'2026-04-23',f:'Fase 1 · Rescate',r:'CEO',p:'Alta',t:'Responder CADA comentario de ambas publicaciones en menos de 15 minutos — a cada comentario responder con el link de registro'},
+{d:3,dt:'2026-04-23',f:'Fase 1 · Rescate',r:'CEO',p:'Alta',t:'Producir 2 videos cortos con Claude Code: video 1 "Las IAs cambian tu diseño. Arch Garden no." y video 2 tutorial de 60 segundos'},
+{d:3,dt:'2026-04-23',f:'Fase 1 · Rescate',r:'CEO',p:'Alta',t:'Enviar segundo mensaje muy corto a los dormidos que NO respondieron el día 1: "Último mensaje — ¿quieres que libere tu cupo?"'},
+{d:3,dt:'2026-04-23',f:'Fase 1 · Rescate',r:'CEO',p:'Alta',t:'Identificar los 3 beta users con más seguidores en Instagram y enviarles propuesta de embajador: créditos ilimitados a cambio de un post honesto si les gusta el resultado'},
+{d:3,dt:'2026-04-23',f:'Fase 1 · Rescate',r:'CEO',p:'Media',t:'Publicar Reel en @archgardenai con uno de los videos producidos hoy y publicarlo también en TikTok con caption adaptado para cada plataforma'},
+{d:3,dt:'2026-04-23',f:'Fase 1 · Rescate',r:'CEO',p:'Media',t:'Publicar primer mensaje en el grupo WhatsApp beta: video tutorial + pregunta "¿Qué tipo de proyectos están trabajando actualmente?"'},
+{d:3,dt:'2026-04-23',f:'Fase 1 · Rescate',r:'CEO',p:'Alta',t:'⭐ Cierre Fase 1: anotar en el spreadsheet el estado final de los 13 y definir quiénes serán embajadores, quiénes pagarán y quiénes se liberan'},
+{d:3,dt:'2026-04-23',f:'Fase 1 · Rescate',r:'DEV',p:'Alta',t:'Implementar la mejora UX más urgente del feedback de las calls de ayer — deploy inmediato'},
+{d:3,dt:'2026-04-23',f:'Fase 1 · Rescate',r:'DEV',p:'Alta',t:'Hacer test end-to-end del flujo freemium → uso → conversión a pago y documentar cualquier fricción encontrada'},
+
+{d:4,dt:'2026-04-24',f:'Fase 2 · Conversión',r:'CEO',p:'Alta',t:'Publicar en LinkedIn desde @evyarchitects: "3 razones por las que construí Arch Garden siendo arquitecta" — tono personal, experiencia propia con V-Ray y Lumion',m:true},
+{d:4,dt:'2026-04-24',f:'Fase 2 · Conversión',r:'CEO',p:'Alta',t:'Producir video tutorial de 60 segundos con Claude Code: "Cómo generar tu primer render en Arch Garden" mostrando los 5 pasos con pantallas reales de la app'},
+{d:4,dt:'2026-04-24',f:'Fase 2 · Conversión',r:'CEO',p:'Alta',t:'Grabar video antes/después con celular: render base de SketchUp → render mejorado con Arch Garden — mantener exactamente el mismo ángulo y diseño',m:true},
+{d:4,dt:'2026-04-24',f:'Fase 2 · Conversión',r:'CEO',p:'Alta',t:'Publicar ambos videos: Reel en @archgardenai y @evyarchitects, TikTok en ambas cuentas con descriptions distintas adaptadas a cada plataforma'},
+{d:4,dt:'2026-04-24',f:'Fase 2 · Conversión',r:'CEO',p:'Alta',t:'Buscar 25 arquitectos LATAM en LinkedIn: título "Arquitecto" o "Diseñador de interiores", publicaciones recientes sobre render, conexión de 2do grado — guardar la lista'},
+{d:4,dt:'2026-04-24',f:'Fase 2 · Conversión',r:'CEO',p:'Alta',t:'Enviar 15 solicitudes de conexión con nota + 10 DMs personalizados a conexiones actuales — mencionar un detalle específico de su proyecto en el perfil'},
+{d:4,dt:'2026-04-24',f:'Fase 2 · Conversión',r:'CEO',p:'Media',t:'Enviar mensaje exclusivo al grupo WhatsApp beta: compartir el video antes/después del propio proyecto de Evy Architects producido hoy'},
+{d:4,dt:'2026-04-24',f:'Fase 2 · Conversión',r:'CEO',p:'Media',t:'Hacer seguimiento con los 3 embajadores identificados ayer: ¿aceptaron la propuesta? Si sí, coordinar cuándo publicarán'},
+{d:4,dt:'2026-04-24',f:'Fase 2 · Conversión',r:'CEO',p:'Alta',t:'Revisión de uso de la app con dev — ¿hubo algún primer pago esta semana?'},
+{d:4,dt:'2026-04-24',f:'Fase 2 · Conversión',r:'DEV',p:'Alta',t:'Monitorear logs en tiempo real y reportar a Evelyn si algún usuario se atascó o si hubo errores durante el proceso de pago'},
+
+{d:5,dt:'2026-04-25',f:'Fase 2 · Conversión',r:'CEO',p:'Alta',t:'Publicar post en LinkedIn con quote textual de un beta activo (con permiso): qué resolvió específicamente Arch Garden en su workflow real',m:true},
+{d:5,dt:'2026-04-25',f:'Fase 2 · Conversión',r:'CEO',p:'Alta',t:'Producir video cara a cámara: "Lo que aprendí en 72h con mis primeros beta users" — contar 2-3 insights reales sin revelar nombres, mostrar autenticidad'},
+{d:5,dt:'2026-04-25',f:'Fase 2 · Conversión',r:'CEO',p:'Alta',t:'Producir video hook viral para TikTok: "POV: llevas 4 horas esperando tu render y el cliente pide cambios" — máximo 20 segundos'},
+{d:5,dt:'2026-04-25',f:'Fase 2 · Conversión',r:'CEO',p:'Alta',t:'Publicar ambos videos en las 4 cuentas: IG personal @evyarchitects, @archgardenai, TikTok personal y @archgardenai'},
+{d:5,dt:'2026-04-25',f:'Fase 2 · Conversión',r:'CEO',p:'Alta',t:'Escribir a los 3 embajadores con audiencia: enviarles el contenido ya editado y listo para compartir — no necesitan crear nada, solo publicar si quieren'},
+{d:5,dt:'2026-04-25',f:'Fase 2 · Conversión',r:'CEO',p:'Media',t:'Enviar 15 DMs LinkedIn nuevos a arquitectos con el mismo perfil target: SketchUp, Lumion, proyectos residenciales o comerciales en LATAM'},
+{d:5,dt:'2026-04-25',f:'Fase 2 · Conversión',r:'CEO',p:'Alta',t:'Retro rápida semana 1: registros freemium, pagos confirmados, canal con mejor conversión — actualizar métricas del dashboard',m:true},
+{d:5,dt:'2026-04-25',f:'Fase 2 · Conversión',r:'DEV',p:'Alta',t:'Soporte técnico reactivo y fixes menores — disponible para cualquier problema que reporte Evelyn durante el día'},
+
+{d:6,dt:'2026-04-26',f:'Fase 2 · Conversión',r:'CEO',p:'Alta',t:'Responder todos los DMs acumulados de la semana en LinkedIn, Instagram y WhatsApp — a los que comentaron "render" enviar el DM pidiendo correo para acceso'},
+{d:6,dt:'2026-04-26',f:'Fase 2 · Conversión',r:'CEO',p:'Alta',t:'Revisar panel admin con el dev: actividad del fin de semana, nuevos registros, renders generados, algún bug reportado'},
+{d:6,dt:'2026-04-26',f:'Fase 2 · Conversión',r:'CEO',p:'Media',t:'Producir 1 video con Claude Code para tener stock para la semana 2'},
+{d:6,dt:'2026-04-26',f:'Fase 2 · Conversión',r:'CEO',p:'Media',t:'Planear el contenido de semana 2: qué 14 videos producir, qué posts publicar, cuáles son los días de conversión'},
+
+{d:7,dt:'2026-04-27',f:'Fase 2 · Conversión',r:'CEO',p:'Alta',t:'Análisis profundo semana 1: registros freemium, pagos, DMs enviados vs respondidos, % de conversión — actualizar métricas del dashboard',m:true},
+{d:7,dt:'2026-04-27',f:'Fase 2 · Conversión',r:'CEO',p:'Alta',t:'Planeación semana 2 completa — ajustar tareas según lo aprendido, qué perfil de arquitecto respondió mejor, qué mensaje tuvo más conversión'},
+{d:7,dt:'2026-04-27',f:'Fase 2 · Conversión',r:'CEO',p:'Alta',t:'Preparar y dejar listo el POST DE CONVERSIÓN del miércoles 30 de abril — tenerlo escrito, revisado y listo para publicar'},
+
+{d:8,dt:'2026-04-28',f:'Fase 2 · Conversión',r:'CEO',p:'Alta',t:'Publicar case study #2 en LinkedIn: diferente beta user, diferente tipo de proyecto — pedir permiso al usuario antes, usar imágenes antes/después reales',m:true},
+{d:8,dt:'2026-04-28',f:'Fase 2 · Conversión',r:'CEO',p:'Alta',t:'Producir video "Probé 5 IAs para render arquitectónico — solo una respetó mi diseño": cara a cámara + cortes a pantalla mostrando las diferencias'},
+{d:8,dt:'2026-04-28',f:'Fase 2 · Conversión',r:'CEO',p:'Alta',t:'Publicar ese video en TikTok + Reels de ambas cuentas con descriptions distintas adaptadas a cada plataforma'},
+{d:8,dt:'2026-04-28',f:'Fase 2 · Conversión',r:'CEO',p:'Alta',t:'Outreach escalado LinkedIn: identificar 30 arquitectos nuevos y enviar 25 DMs personalizados — foco en quien publicó proyectos activos esta semana'},
+{d:8,dt:'2026-04-28',f:'Fase 2 · Conversión',r:'CEO',p:'Alta',t:'Hacer follow-up con los arquitectos que dieron like o comentaron la semana pasada pero no respondieron el DM — mensaje corto de reactivación'},
+{d:8,dt:'2026-04-28',f:'Fase 2 · Conversión',r:'CEO',p:'Alta',t:'Revisión de uso app con dev — verificar que el post de conversión del miércoles esté listo'},
+{d:8,dt:'2026-04-28',f:'Fase 2 · Conversión',r:'DEV',p:'Alta',t:'Implementar la feature pedida con más frecuencia en las calls de la semana pasada — coordinar con Evelyn cuál es prioritaria'},
+{d:8,dt:'2026-04-28',f:'Fase 2 · Conversión',r:'DEV',p:'Media',t:'Quick wins UX: mejorar mensajes de error, agregar tooltips descriptivos en los dropdowns, optimizar el loader del análisis IA'},
+
+{d:9,dt:'2026-04-29',f:'Fase 2 · Conversión',r:'CEO',p:'Alta',t:'Publicar post técnico LinkedIn: "Cómo entrenamos una IA que respeta la arquitectura" — explicar el pipeline simplificado, mostrar que hay ingeniería y criterio detrás',m:true},
+{d:9,dt:'2026-04-29',f:'Fase 2 · Conversión',r:'CEO',p:'Alta',t:'Producir y subir video largo a YouTube (8-10 min): "Arch Garden AI — cómo mejorar renders sin cambiar tu diseño". Optimizar título SEO, descripción, thumbnail y tags'},
+{d:9,dt:'2026-04-29',f:'Fase 2 · Conversión',r:'CEO',p:'Alta',t:'Hacer 20 comentarios de autoridad en posts LinkedIn de arquitectos con alto engagement — respuestas técnicas reales y útiles, no genéricas'},
+{d:9,dt:'2026-04-29',f:'Fase 2 · Conversión',r:'CEO',p:'Alta',t:'Enviar 20 DMs LinkedIn personalizados a arquitectos que publicaron renders esta semana'},
+{d:9,dt:'2026-04-29',f:'Fase 2 · Conversión',r:'CEO',p:'Alta',t:'Finalizar y revisar el post de conversión del miércoles — tenerlo listo para publicar a las 10am'},
+{d:9,dt:'2026-04-29',f:'Fase 2 · Conversión',r:'DEV',p:'Alta',t:'Analytics avanzados en panel admin: tiempo promedio de sesión, tasa de conversión freemium a pago, paso donde más usuarios abandonan'},
+
+{d:10,dt:'2026-04-30',f:'Fase 2 · Conversión',r:'CEO',p:'Alta',t:'⭐ ANTES DE PUBLICAR: verificar que el formulario de registro funciona, el pago funciona, el video tutorial es accesible y los 3 créditos se acreditan correctamente',m:true},
+{d:10,dt:'2026-04-30',f:'Fase 2 · Conversión',r:'CEO',p:'Alta',t:'⭐ PUBLICAR POST DE CONVERSIÓN #1 en LinkedIn: busco arquitectos que quieran probar Arch Garden con 3 créditos gratis y dar feedback real',m:true},
+{d:10,dt:'2026-04-30',f:'Fase 2 · Conversión',r:'CEO',p:'Alta',t:'⭐ Responder CADA comentario del post en menos de 10 minutos — enviar DM con link de registro a cada persona que comente'},
+{d:10,dt:'2026-04-30',f:'Fase 2 · Conversión',r:'CEO',p:'Alta',t:'Amplificar en TikTok y Stories de Instagram: "3 créditos gratis para arquitectos que quieran probar Arch Garden hoy"'},
+{d:10,dt:'2026-04-30',f:'Fase 2 · Conversión',r:'CEO',p:'Alta',t:'Enviar 20 DMs de urgencia a prospectos tibios del mes: "Hoy estoy respondiendo personalmente a quienes quieran acceso"'},
+{d:10,dt:'2026-04-30',f:'Fase 2 · Conversión',r:'CEO',p:'Alta',t:'Hacer onboarding de 15 min por WhatsApp o Zoom con cada nuevo registro del día — guiarlos en su primera generación en tiempo real'},
+{d:10,dt:'2026-04-30',f:'Fase 2 · Conversión',r:'CEO',p:'Alta',t:'⭐ COUNT al cierre: cuántos registros freemium y cuántos pagos generó este post — anotar en métricas del dashboard',m:true},
+{d:10,dt:'2026-04-30',f:'Fase 2 · Conversión',r:'DEV',p:'Alta',t:'⭐ On-call todo el día: plataforma al 100%, monitoreo activo de logs cada hora, respuesta inmediata a cualquier error o caída'},
+
+{d:11,dt:'2026-05-01',f:'Fase 3 · Amplificación',r:'CEO',p:'Alta',t:'Revisar resultados del post de conversión: cuántos registros, cuántos pagos, qué comentarios resonaron más — ajustar el mensaje para los próximos posts'},
+{d:11,dt:'2026-05-01',f:'Fase 3 · Amplificación',r:'CEO',p:'Alta',t:'Publicar mega carrusel en @archgardenai: "10 renders antes y después — proyectos de nuestros beta users" — pedir permiso individual antes de publicar cada uno',m:true},
+{d:11,dt:'2026-05-01',f:'Fase 3 · Amplificación',r:'CEO',p:'Alta',t:'Producir video testimonial con un beta user activo: 30 segundos hablando de cómo cambió su workflow — publicar en Stories primero'},
+{d:11,dt:'2026-05-01',f:'Fase 3 · Amplificación',r:'CEO',p:'Alta',t:'Outreach B2B: buscar 10 estudios de arquitectura LATAM en LinkedIn con más de 5 personas y proyectos de renders frecuentes'},
+{d:11,dt:'2026-05-01',f:'Fase 3 · Amplificación',r:'CEO',p:'Alta',t:'Enviar los primeros 5 correos B2B a estudios: asunto "Reducir tiempo de renders 70% en tu estudio — demo de 20 min sin compromiso"'},
+{d:11,dt:'2026-05-01',f:'Fase 3 · Amplificación',r:'CEO',p:'Media',t:'Enviar 20 DMs B2C nuevos en LinkedIn — continuar con el mismo perfil target de la semana pasada'},
+{d:11,dt:'2026-05-01',f:'Fase 3 · Amplificación',r:'CEO',p:'Alta',t:'Revisión de uso app con dev al cierre'},
+{d:11,dt:'2026-05-01',f:'Fase 3 · Amplificación',r:'DEV',p:'Alta',t:'Implementar la feature crítica más solicitada esta semana + optimizar velocidad del análisis IA (meta: menos de 25 segundos)'},
+
+{d:12,dt:'2026-05-02',f:'Fase 3 · Amplificación',r:'CEO',p:'Alta',t:'Coordinar y publicar la colaboración con el primer embajador: ellos publican su antes/después, tú reposteas en @archgardenai y amplías en LinkedIn'},
+{d:12,dt:'2026-05-02',f:'Fase 3 · Amplificación',r:'CEO',p:'Alta',t:'Producir 2 videos en lote: "Un arquitecto que ahorró 4 horas de render" y "Así se ve el análisis IA de Arch Garden en acción"'},
+{d:12,dt:'2026-05-02',f:'Fase 3 · Amplificación',r:'CEO',p:'Alta',t:'Hacer outreach a 20 personas de la audiencia del embajador que interactuaron con su post — DM directo mencionando que trabajan con arquitectos similares'},
+{d:12,dt:'2026-05-02',f:'Fase 3 · Amplificación',r:'CEO',p:'Alta',t:'Publicar en Reddit r/architecture: post genuino y útil, aportar valor, mencionar Arch Garden al final como herramienta que usas como arquitecta'},
+{d:12,dt:'2026-05-02',f:'Fase 3 · Amplificación',r:'CEO',p:'Media',t:'Enviar 15 DMs LinkedIn + hacer 20 comentarios de autoridad técnica en posts de arquitectura con alto engagement'},
+{d:12,dt:'2026-05-02',f:'Fase 3 · Amplificación',r:'CEO',p:'Alta',t:'Retro mini semana 2: qué canal trajo más conversiones, qué mensaje funcionó mejor, qué tipo de arquitecto convirtió más'},
+{d:12,dt:'2026-05-02',f:'Fase 3 · Amplificación',r:'DEV',p:'Alta',t:'Feature de la semana en producción + cleanup técnico + logs revisados'},
+
+{d:13,dt:'2026-05-03',f:'Fase 3 · Amplificación',r:'CEO',p:'Alta',t:'Responder todos los DMs acumulados de la semana — los que pregunten por precio: enviar link de planes directamente, no explicar por mensaje'},
+{d:13,dt:'2026-05-03',f:'Fase 3 · Amplificación',r:'CEO',p:'Media',t:'Producir video cara a cámara: "El cliente aprobó mi proyecto en la primera presentación — esto cambió" — 45 segundos, natural'},
+{d:13,dt:'2026-05-03',f:'Fase 3 · Amplificación',r:'CEO',p:'Alta',t:'Revisión de uso app'},
+
+{d:14,dt:'2026-05-04',f:'Fase 3 · Amplificación',r:'CEO',p:'Alta',t:'Análisis semana 2 completo: qué funcionó, qué no, qué tipo de arquitecto convirtió mejor, qué canal tiene el mejor retorno',m:true},
+{d:14,dt:'2026-05-04',f:'Fase 3 · Amplificación',r:'CEO',p:'Alta',t:'Planeación semana 3: ajustar tareas basándose en datos reales de las primeras dos semanas, no en suposiciones'},
+{d:14,dt:'2026-05-04',f:'Fase 3 · Amplificación',r:'CEO',p:'Alta',t:'Preparar lista de 50 arquitectos target para semana 3 + lista de 20 estudios y constructoras para outreach B2B intensivo'},
+
+{d:15,dt:'2026-05-05',f:'Fase 3 · Amplificación',r:'CEO',p:'Alta',t:'⭐ VIRAL PUSH: publicar el video más potente disponible en TODAS las plataformas simultáneamente — LinkedIn, TikTok, IG personal, @archgardenai, YouTube Shorts',m:true},
+{d:15,dt:'2026-05-05',f:'Fase 3 · Amplificación',r:'CEO',p:'Alta',t:'Pedir a los 5-7 beta users más activos que compartan un before/after propio en sus redes etiquetando @archgardenai — ofrecer créditos extra como incentivo'},
+{d:15,dt:'2026-05-05',f:'Fase 3 · Amplificación',r:'CEO',p:'Alta',t:'⭐ OUTREACH MÁXIMO: enviar 30 DMs personalizados en LinkedIn durante el día — este es el pico de volumen de todo el mes'},
+{d:15,dt:'2026-05-05',f:'Fase 3 · Amplificación',r:'CEO',p:'Alta',t:'Hacer calls de cierre con los 3-5 prospectos más calientes que llevan una semana con interés pero no han dado el paso — entender qué les frena'},
+{d:15,dt:'2026-05-05',f:'Fase 3 · Amplificación',r:'CEO',p:'Alta',t:'Revisión de uso app con dev'},
+{d:15,dt:'2026-05-05',f:'Fase 3 · Amplificación',r:'DEV',p:'Alta',t:'Optimizar performance: reducir tiempo de respuesta del modelo y tiempo de generación del render si es posible'},
+
+{d:16,dt:'2026-05-06',f:'Fase 3 · Amplificación',r:'CEO',p:'Alta',t:'Identificar 10 podcasts de arquitectura LATAM y España y enviar pitch personalizado a cada uno: "Soy arquitecta y co-founder de Arch Garden, puedo hablar de IA en render desde adentro"'},
+{d:16,dt:'2026-05-06',f:'Fase 3 · Amplificación',r:'CEO',p:'Alta',t:'Publicar post largo en LinkedIn: "Lo que aprendí con mis primeros 40 usuarios beta de Arch Garden" — con datos reales: renders generados, tiempo ahorrado, feedback textual',m:true},
+{d:16,dt:'2026-05-06',f:'Fase 3 · Amplificación',r:'CEO',p:'Alta',t:'Outreach B2B: enviar 10 correos nuevos a estudios y constructoras personalizados con el tipo de proyectos que manejan'},
+{d:16,dt:'2026-05-06',f:'Fase 3 · Amplificación',r:'CEO',p:'Media',t:'Enviar 20 DMs LinkedIn + hacer 20 comentarios estratégicos en posts de arquitectos con más de 500 interacciones'},
+{d:16,dt:'2026-05-06',f:'Fase 3 · Amplificación',r:'CEO',p:'Alta',t:'Preparar el segundo POST DE CONVERSIÓN para mañana miércoles — actualizar con los números reales de esta semana'},
+{d:16,dt:'2026-05-06',f:'Fase 3 · Amplificación',r:'DEV',p:'Alta',t:'Implementar mejoras UX pendientes y cualquier fix urgente del uso intensivo de esta semana'},
+
+{d:17,dt:'2026-05-07',f:'Fase 3 · Amplificación',r:'CEO',p:'Alta',t:'⭐ PUBLICAR POST DE CONVERSIÓN #2 en LinkedIn: actualización con datos reales — cuántos usan Arch Garden, qué están diciendo, cuántos cupos quedan',m:true},
+{d:17,dt:'2026-05-07',f:'Fase 3 · Amplificación',r:'CEO',p:'Alta',t:'⭐ Responder CADA comentario en menos de 5 minutos durante las primeras 2 horas — no hacer nada más hasta cubrir todos los comentarios'},
+{d:17,dt:'2026-05-07',f:'Fase 3 · Amplificación',r:'CEO',p:'Alta',t:'Hacer calls inmediatas con los que pidan demo o más info — no los dejes para mañana, el interés se enfría rápido'},
+{d:17,dt:'2026-05-07',f:'Fase 3 · Amplificación',r:'CEO',p:'Alta',t:'Amplificar en TikTok y Stories de ambas cuentas con CTA directo al link de registro'},
+{d:17,dt:'2026-05-07',f:'Fase 3 · Amplificación',r:'CEO',p:'Alta',t:'Enviar 25 DMs con urgencia a todos los prospectos tibios del mes: "Esta semana es la última con la oferta de lanzamiento"'},
+{d:17,dt:'2026-05-07',f:'Fase 3 · Amplificación',r:'CEO',p:'Alta',t:'⭐ COUNT al cierre: registros y pagos del día — comparar con el primer post de conversión del 30 de abril',m:true},
+{d:17,dt:'2026-05-07',f:'Fase 3 · Amplificación',r:'DEV',p:'Alta',t:'⭐ On-call todo el día — plataforma al 100%'},
+
+{d:18,dt:'2026-05-08',f:'Fase 3 · Amplificación',r:'CEO',p:'Alta',t:'Anunciar en Instagram y LinkedIn: "Abrimos grupo de comunidad Arch Garden Beta — únete si ya estás usando la plataforma"'},
+{d:18,dt:'2026-05-08',f:'Fase 3 · Amplificación',r:'CEO',p:'Alta',t:'Producir 2 videos testimoniales con beta users activos: 30 segundos, cara a cámara, qué cambió en su workflow desde que usan Arch Garden'},
+{d:18,dt:'2026-05-08',f:'Fase 3 · Amplificación',r:'CEO',p:'Alta',t:'Pedir referidos a los beta users más satisfechos: "Si me refieres un colega arquitecto que entre y use la plataforma, te regalo 200 créditos adicionales"'},
+{d:18,dt:'2026-05-08',f:'Fase 3 · Amplificación',r:'CEO',p:'Alta',t:'Outreach B2B: follow-up a los estudios contactados la semana pasada — si no respondieron, segundo mensaje con case study concreto adjunto'},
+{d:18,dt:'2026-05-08',f:'Fase 3 · Amplificación',r:'CEO',p:'Alta',t:'Revisión de uso app con dev'},
+{d:18,dt:'2026-05-08',f:'Fase 3 · Amplificación',r:'DEV',p:'Alta',t:'Implementar sistema básico de referidos: código único por usuario que da créditos automáticos al referido cuando convierte'},
+
+{d:19,dt:'2026-05-09',f:'Fase 3 · Amplificación',r:'CEO',p:'Alta',t:'Publicar post reflexivo LinkedIn: "3 semanas construyendo Arch Garden — lo que nadie te cuenta de lanzar un SaaS siendo arquitecta" — honesto, con datos reales',m:true},
+{d:19,dt:'2026-05-09',f:'Fase 3 · Amplificación',r:'CEO',p:'Alta',t:'Producir 2 videos en lote: video de comunidad y video mostrando una feature específica del editor que pocos conocen'},
+{d:19,dt:'2026-05-09',f:'Fase 3 · Amplificación',r:'CEO',p:'Alta',t:'Outreach a todos los prospectos tibios del mes que interactuaron pero no convirtieron: "Última semana con el precio de lanzamiento"'},
+{d:19,dt:'2026-05-09',f:'Fase 3 · Amplificación',r:'CEO',p:'Alta',t:'Hacer calls con los indecisos que llevan más de una semana en pipeline — preguntar directamente qué les frena para tomar la decisión'},
+{d:19,dt:'2026-05-09',f:'Fase 3 · Amplificación',r:'CEO',p:'Alta',t:'RETRO semana 3 con dev: qué mejoras UX se implementaron, cuál fue el impacto en conversión, qué priorizar la próxima semana',m:true},
+{d:19,dt:'2026-05-09',f:'Fase 3 · Amplificación',r:'DEV',p:'Media',t:'Cleanup técnico semanal: logs revisados, deuda técnica menor resuelta, preparar para semana 4'},
+
+{d:20,dt:'2026-05-10',f:'Fase 3 · Amplificación',r:'CEO',p:'Alta',t:'Responder todos los DMs pendientes de la semana — priorizar a los que tienen señales claras de intención de pago'},
+{d:20,dt:'2026-05-10',f:'Fase 3 · Amplificación',r:'CEO',p:'Media',t:'Producir 1 video y preparar la estrategia de contenido y outreach para la semana 4'},
+{d:20,dt:'2026-05-10',f:'Fase 3 · Amplificación',r:'CEO',p:'Alta',t:'Revisión de uso app'},
+
+{d:21,dt:'2026-05-11',f:'Fase 4 · B2B',r:'CEO',p:'Alta',t:'Análisis de las 3 semanas: identificar el ICP real — qué perfil exacto de arquitecto tiene más probabilidad de pagar y de seguir usando la plataforma',m:true},
+{d:21,dt:'2026-05-11',f:'Fase 4 · B2B',r:'CEO',p:'Alta',t:'Crear lista de 30 estudios, constructoras e inmobiliarias LATAM con volumen de proyectos activos — buscar en LinkedIn con filtros de empresa + industria + tamaño'},
+{d:21,dt:'2026-05-11',f:'Fase 4 · B2B',r:'CEO',p:'Alta',t:'Preparar template de outreach B2B adaptado a cada tipo de empresa: estudio pequeño, constructora y inmobiliaria — mensajes distintos para cada perfil'},
+
+{d:22,dt:'2026-05-12',f:'Fase 4 · B2B',r:'CEO',p:'Alta',t:'Publicar post LinkedIn B2B: "Cómo los estudios de arquitectura LATAM están reduciendo el tiempo de renders con IA sin cambiar su flujo de trabajo"'},
+{d:22,dt:'2026-05-12',f:'Fase 4 · B2B',r:'CEO',p:'Alta',t:'Producir video demo B2B de 60 segundos: mostrar cómo un estudio con 3 proyectos activos usaría Arch Garden en su día a día — ritmo rápido, enfocado en eficiencia'},
+{d:22,dt:'2026-05-12',f:'Fase 4 · B2B',r:'CEO',p:'Alta',t:'Outreach B2B masivo: enviar 15 mensajes LinkedIn + correos a estudios de la lista — personalizar cada uno con el tipo de proyectos que hacen'},
+{d:22,dt:'2026-05-12',f:'Fase 4 · B2B',r:'CEO',p:'Media',t:'Seguir con outreach B2C light: 10 DMs + gestión activa del grupo WhatsApp beta'},
+{d:22,dt:'2026-05-12',f:'Fase 4 · B2B',r:'CEO',p:'Alta',t:'Revisión de uso app con dev'},
+{d:22,dt:'2026-05-12',f:'Fase 4 · B2B',r:'DEV',p:'Media',t:'Empezar feature para cuentas de equipo B2B: múltiples usuarios bajo un mismo plan, dashboard compartido para el administrador del estudio'},
+
+{d:23,dt:'2026-05-13',f:'Fase 4 · B2B',r:'CEO',p:'Alta',t:'Publicar 3 testimonios en cascada durante el día: mañana LinkedIn, mediodía Instagram, tarde TikTok — 3 beta users diferentes, 3 tipos de proyecto distintos',m:true},
+{d:23,dt:'2026-05-13',f:'Fase 4 · B2B',r:'CEO',p:'Alta',t:'Producir video compilado: "Renders de nuestra comunidad de arquitectos" — collage de antes/después de 5-6 proyectos con permiso de los usuarios'},
+{d:23,dt:'2026-05-13',f:'Fase 4 · B2B',r:'CEO',p:'Alta',t:'Outreach B2B: follow-up con estudios + enviar 10 nuevos correos — empezar a agendar demos para esta semana o la siguiente'},
+{d:23,dt:'2026-05-13',f:'Fase 4 · B2B',r:'CEO',p:'Alta',t:'Hacer calls de demo B2B con los estudios que respondieron — mostrar el flujo específico para equipos y cómo organiza múltiples proyectos'},
+{d:23,dt:'2026-05-13',f:'Fase 4 · B2B',r:'CEO',p:'Alta',t:'Revisión de uso app con dev'},
+{d:23,dt:'2026-05-13',f:'Fase 4 · B2B',r:'DEV',p:'Alta',t:'Mejoras UX de la semana: implementar los cambios más pedidos por los usuarios que ya están pagando y usando la plataforma activamente'},
+
+{d:24,dt:'2026-05-14',f:'Fase 4 · B2B',r:'CEO',p:'Alta',t:'⭐ PUBLICAR POST CONVERSIÓN #3: "Última semana con la oferta de lanzamiento — el precio sube el próximo lunes"',m:true},
+{d:24,dt:'2026-05-14',f:'Fase 4 · B2B',r:'CEO',p:'Alta',t:'⭐ Respuesta masiva: cada comentario respondido con el link, DMs inmediatos a los interesados — mismo protocolo que los posts de conversión anteriores'},
+{d:24,dt:'2026-05-14',f:'Fase 4 · B2B',r:'CEO',p:'Alta',t:'Amplificar en todas las plataformas con un video de urgencia real — mostrar el contador de cupos real, no inventar escasez'},
+{d:24,dt:'2026-05-14',f:'Fase 4 · B2B',r:'CEO',p:'Alta',t:'Enviar 25 DMs de urgencia final a TODOS los prospectos que han estado tibios durante el mes — el más directo hasta ahora'},
+{d:24,dt:'2026-05-14',f:'Fase 4 · B2B',r:'CEO',p:'Alta',t:'⭐ COUNT al cierre: total de pagos hasta hoy — ¿llegamos a 20? ¿a 25? Actualizar métricas del dashboard',m:true},
+{d:24,dt:'2026-05-14',f:'Fase 4 · B2B',r:'DEV',p:'Alta',t:'⭐ On-call todo el día'},
+
+{d:25,dt:'2026-05-15',f:'Fase 4 · B2B',r:'CEO',p:'Alta',t:'Publicar post en LinkedIn con datos reales de los 25 días: renders generados, tipos de proyectos, países, tiempo promedio de mejora por render',m:true},
+{d:25,dt:'2026-05-15',f:'Fase 4 · B2B',r:'CEO',p:'Alta',t:'Producir video reflexivo cara a cámara: "Lo que cambió después de mis primeros 25 días con Arch Garden abierto" — honesto sobre qué salió bien y qué no'},
+{d:25,dt:'2026-05-15',f:'Fase 4 · B2B',r:'CEO',p:'Alta',t:'Hacer calls B2B con estudios que mostraron interés — presentar propuesta para plan equipo, negociar condiciones de piloto de 30 días'},
+{d:25,dt:'2026-05-15',f:'Fase 4 · B2B',r:'CEO',p:'Alta',t:'Revisión de uso app con dev'},
+{d:25,dt:'2026-05-15',f:'Fase 4 · B2B',r:'DEV',p:'Media',t:'Mejoras y soporte reactivo según lo que salga del uso del día'},
+
+{d:26,dt:'2026-05-16',f:'Fase 4 · B2B',r:'CEO',p:'Alta',t:'Publicar post: "La oferta de lanzamiento de Arch Garden cierra el viernes — esto es lo que incluye y por qué la creamos así"'},
+{d:26,dt:'2026-05-16',f:'Fase 4 · B2B',r:'CEO',p:'Alta',t:'Producir 2 videos para el fin de semana: video de conversión final y video de comunidad mostrando renders de los usuarios'},
+{d:26,dt:'2026-05-16',f:'Fase 4 · B2B',r:'CEO',p:'Alta',t:'Outreach B2B último push de la semana: follow-up a todos los estudios, oferta especial para el primer cliente corporativo que cierre'},
+{d:26,dt:'2026-05-16',f:'Fase 4 · B2B',r:'CEO',p:'Alta',t:'Check-in de retención: escribir a todos los usuarios que pagaron — ¿siguen usando?, ¿les está funcionando?, ¿qué mejorarían?'},
+{d:26,dt:'2026-05-16',f:'Fase 4 · B2B',r:'CEO',p:'Alta',t:'RETRO semana 4 con dev: estado del producto, mejoras implementadas, impacto en conversión, plan técnico para junio',m:true},
+{d:26,dt:'2026-05-16',f:'Fase 4 · B2B',r:'DEV',p:'Media',t:'Cleanup técnico y feature de la semana según priorización del feedback acumulado'},
+
+{d:27,dt:'2026-05-17',f:'Fase 4 · B2B',r:'CEO',p:'Alta',t:'Responder todos los DMs pendientes del fin de semana y preparar el anuncio formal de cierre de oferta para el lunes'},
+{d:27,dt:'2026-05-17',f:'Fase 4 · B2B',r:'CEO',p:'Alta',t:'Revisión de uso app'},
+
+{d:28,dt:'2026-05-18',f:'Fase 4 · B2B',r:'CEO',p:'Alta',t:'Análisis completo Fase 4: conversiones B2C totales, pipeline B2B actual, qué tipo de estudio mostró más interés real, qué ajustar para junio',m:true},
+{d:28,dt:'2026-05-18',f:'Fase 4 · B2B',r:'CEO',p:'Alta',t:'Preparar todo el contenido de la Fase 5 (última semana): posts de cierre, videos de resumen, mensajes de agradecimiento personales'},
+
+{d:29,dt:'2026-05-19',f:'Fase 5 · Cierre',r:'CEO',p:'Alta',t:'⭐ Publicar: "La oferta de lanzamiento de Arch Garden cierra en 48 horas — esto es lo último que voy a decir sobre esto"',m:true},
+{d:29,dt:'2026-05-19',f:'Fase 5 · Cierre',r:'CEO',p:'Alta',t:'Producir el último video de conversión: cara a cámara mostrando un render propio y explicando exactamente cuánto tardó vs antes'},
+{d:29,dt:'2026-05-19',f:'Fase 5 · Cierre',r:'CEO',p:'Alta',t:'Enviar 20 DMs de último llamado a todos los prospectos del mes que nunca convirtieron — mensaje muy corto y directo: "Mañana cierra, ¿te apunto?"'},
+{d:29,dt:'2026-05-19',f:'Fase 5 · Cierre',r:'CEO',p:'Alta',t:'Revisión de uso app con dev'},
+{d:29,dt:'2026-05-19',f:'Fase 5 · Cierre',r:'DEV',p:'Media',t:'Soporte y mejoras reactivas — priorizar lo que afecte la experiencia de usuarios pagantes'},
+
+{d:30,dt:'2026-05-20',f:'Fase 5 · Cierre',r:'CEO',p:'Alta',t:'⭐ Publicar: "HOY cierra la oferta de lanzamiento de Arch Garden. Mañana los planes vuelven al precio normal"',m:true},
+{d:30,dt:'2026-05-20',f:'Fase 5 · Cierre',r:'CEO',p:'Alta',t:'Llamar directamente por WhatsApp a los 5 prospectos más calientes que no han pagado — cierre conversacional, no escrito'},
+{d:30,dt:'2026-05-20',f:'Fase 5 · Cierre',r:'CEO',p:'Alta',t:'Hacer onboarding express de todos los que se registren hoy — guiarlos en su primera generación en el día mismo'},
+{d:30,dt:'2026-05-20',f:'Fase 5 · Cierre',r:'CEO',p:'Alta',t:'Preparar el post del balance del mes para mañana — tener los números exactos listos antes de las 9pm'},
+{d:30,dt:'2026-05-20',f:'Fase 5 · Cierre',r:'DEV',p:'Alta',t:'On-call y soporte — día de alto tráfico esperado'},
+
+{d:31,dt:'2026-05-21',f:'Fase 5 · Cierre',r:'CEO',p:'Alta',t:'⭐ Publicar balance de 30 días con datos reales: renders generados, clientes activos, ingresos, tipos de proyecto, países donde se usa — post de autoridad',m:true},
+{d:31,dt:'2026-05-21',f:'Fase 5 · Cierre',r:'CEO',p:'Alta',t:'Producir video de gratitud a la comunidad beta: mostrar renders de los usuarios (con permiso), hablar del camino recorrido en un mes'},
+{d:31,dt:'2026-05-21',f:'Fase 5 · Cierre',r:'CEO',p:'Alta',t:'Anunciar oficialmente que la oferta de lanzamiento cerró — comunicar qué viene ahora: precio nuevo, nuevas features en camino, cómo será el siguiente mes'},
+{d:31,dt:'2026-05-21',f:'Fase 5 · Cierre',r:'CEO',p:'Alta',t:'Enviar mensaje personal de WhatsApp o DM a cada cliente que pagó: agradecimiento individual y pregunta sobre qué mejorarían'},
+{d:31,dt:'2026-05-21',f:'Fase 5 · Cierre',r:'CEO',p:'Alta',t:'⭐ BALANCE FINAL: contar registros freemium totales, clientes pagando, ingresos USD, % conversión freemium a pago — actualizar métricas'},
+{d:31,dt:'2026-05-21',f:'Fase 5 · Cierre',r:'DEV',p:'Alta',t:'Deploy de las mejoras finales del mes y backup completo de la base de datos'},
+
+{d:32,dt:'2026-05-22',f:'Fase 5 · Cierre',r:'CEO',p:'Alta',t:'Publicar post: "Esto construimos juntos — data real del primer mes de Arch Garden abierto al público"'},
+{d:32,dt:'2026-05-22',f:'Fase 5 · Cierre',r:'CEO',p:'Alta',t:'Crear landing de waitlist para la próxima ronda — formulario con: nombre, email, tipo de proyectos y software de render que usan'},
+{d:32,dt:'2026-05-22',f:'Fase 5 · Cierre',r:'CEO',p:'Alta',t:'Hacer check-in de retención: encuesta de 3 preguntas por WhatsApp a todos los clientes pagando — respuestas son el insumo para las mejoras de junio'},
+{d:32,dt:'2026-05-22',f:'Fase 5 · Cierre',r:'CEO',p:'Alta',t:'Revisión de uso app con dev'},
+{d:32,dt:'2026-05-22',f:'Fase 5 · Cierre',r:'DEV',p:'Media',t:'Implementar mejoras post-cierre basadas en el feedback de retención — priorizar lo que cause riesgo de churn'},
+
+{d:33,dt:'2026-05-23',f:'Fase 5 · Cierre',r:'CEO',p:'Alta',t:'Publicar post reflexivo personal: "El cofounder que no esperaba ser — cómo pasé de arquitecta a founder en menos de un año"'},
+{d:33,dt:'2026-05-23',f:'Fase 5 · Cierre',r:'CEO',p:'Alta',t:'Análisis profundo del mes: qué canal trajo más conversiones, qué tipo de contenido funcionó mejor, qué mensaje resonó más con los arquitectos',m:true},
+{d:33,dt:'2026-05-23',f:'Fase 5 · Cierre',r:'CEO',p:'Alta',t:'Hacer calls B2B de cierre: presentar propuesta definitiva a los estudios más interesados — objetivo: primer cliente corporativo antes de junio'},
+{d:33,dt:'2026-05-23',f:'Fase 5 · Cierre',r:'CEO',p:'Alta',t:'Construir el plan de junio completo: precio nuevo, canales a escalar, primer cliente B2B, fecha de lanzamiento público si aplica'},
+{d:33,dt:'2026-05-23',f:'Fase 5 · Cierre',r:'CEO',p:'Alta',t:'⭐ RETRO MENSUAL con dev: estado técnico completo, mejoras implementadas en el mes, deuda técnica pendiente, roadmap de junio'},
+{d:33,dt:'2026-05-23',f:'Fase 5 · Cierre',r:'DEV',p:'Alta',t:'Presentar roadmap técnico de junio al CEO: features prioritarias, estimados de tiempo, qué bloqueos técnicos hay que resolver'},
+
+{d:34,dt:'2026-05-24',f:'Fase 5 · Cierre',r:'CEO',p:'Alta',t:'Responder todos los pendientes del mes: DMs sin contestar, emails, comentarios en posts — cerrar el backlog completo'},
+{d:34,dt:'2026-05-24',f:'Fase 5 · Cierre',r:'CEO',p:'Alta',t:'Documentar el feedback completo del mes en un archivo estructurado para el dev: fricciones reportadas, requests de features, bugs mencionados por usuarios'},
+{d:34,dt:'2026-05-24',f:'Fase 5 · Cierre',r:'CEO',p:'Media',t:'Producir 2 videos de cierre de ciclo: uno mirando atrás (qué logramos este mes) y uno mirando adelante (qué viene en junio)'},
+{d:34,dt:'2026-05-24',f:'Fase 5 · Cierre',r:'CEO',p:'Alta',t:'Revisión final de uso app del mes'},
+{d:34,dt:'2026-05-24',f:'Fase 5 · Cierre',r:'DEV',p:'Alta',t:'Documentar toda la deuda técnica y las mejoras implementadas durante el mes — preparar entorno limpio para junio'},
+
+{d:35,dt:'2026-05-25',f:'Fase 5 · Cierre',r:'CEO',p:'Alta',t:'⭐ ANÁLISIS FINAL: contar y registrar — registros freemium totales, clientes pagando, ingresos USD totales, tasa de conversión freemium a pago',m:true},
+{d:35,dt:'2026-05-25',f:'Fase 5 · Cierre',r:'CEO',p:'Alta',t:'⭐ Verificar la meta: ¿llegamos a 50 usuarios orgánicos activos? ¿A 30 clientes pagando? Documentar el número real sin suavizarlo'},
+{d:35,dt:'2026-05-25',f:'Fase 5 · Cierre',r:'CEO',p:'Alta',t:'Definir la estrategia de junio: precio nuevo, canales a escalar, qué mejorar en el producto, cuándo y cómo será el lanzamiento público'},
+{d:35,dt:'2026-05-25',f:'Fase 5 · Cierre',r:'CEO',p:'Alta',t:'Publicar el post de cierre del ciclo: datos reales del mes, gratitud a la comunidad, qué viene — este post es la carta de presentación para junio'},
+{d:35,dt:'2026-05-25',f:'Fase 5 · Cierre',r:'CEO',p:'Media',t:'🌿 Celebrar el mes completado'},
+{d:35,dt:'2026-05-25',f:'Fase 5 · Cierre',r:'DEV',p:'Alta',t:'Balance técnico del mes completo + roadmap de junio definitivo presentado y alineado con el CEO'},
+];
+
+let S={},M={},N={},fil='all';
+const ST=new Date('2026-04-21');
+function ld(){try{S=JSON.parse(localStorage.getItem('ag_s')||'{}');}catch(e){S={};}try{M=JSON.parse(localStorage.getItem('ag_m')||'{}');}catch(e){M={};}try{N=JSON.parse(localStorage.getItem('ag_n')||'{}');}catch(e){N={};}loadCustom();}
+function tk(t){return `${t.d}|${t.r}|${t.t.slice(0,25)}`;}
+function getEst(t){return S[tk(t)]||'';}
+function done(t){return getEst(t)==='dn';}
+function enProceso(t){return getEst(t)==='ep';}
+function setEst(k,val){
+  S[k]=val;
+  localStorage.setItem('ag_s',JSON.stringify(S));
+  rf();
+  const msgs={dn:'✅ Completada','ep':'🔄 En proceso','':'↩️ Pendiente'};
+  showToast(msgs[val]||'');
+}
+function sM(id,v){M[id]=v;localStorage.setItem('ag_m',JSON.stringify(M));showToast('📊 Guardado');}
+function sN(k,v){N[k]=v;localStorage.setItem('ag_n',JSON.stringify(N));}
+function dn(dt){return Math.round((new Date(dt)-ST)/86400000)+1;}
+function td(){const n=new Date();return `${n.getFullYear()}-${String(n.getMonth()+1).padStart(2,'0')}-${String(n.getDate()).padStart(2,'0')}`;}
+function fd(dt){const ds=['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'],ms=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];const d=new Date(dt+'T00:00:00');return `${ds[d.getDay()]} ${d.getDate()} ${ms[d.getMonth()]}`;}
+function fc(f){if(f.includes('1'))return 'tc';if(f.includes('2'))return 'td';if(f.includes('3'))return 'ta';if(f.includes('4'))return 'ts';return '';}
+function fb(f){if(f.includes('1'))return '#4ADE80';if(f.includes('2'))return '#C9A84C';if(f.includes('3'))return '#6495ed';if(f.includes('4'))return '#FF6B6B';return '#d47ad4';}
+
+function showTab(n,el){document.querySelectorAll('.view').forEach(v=>v.classList.remove('on'));document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));document.getElementById('v-'+n).classList.add('on');el.classList.add('on');if(n==='hoy')rHoy();if(n==='cal')rCal();if(n==='list')rList();if(n==='met')rMet();}
+
+function getCurrentDayNum(){
+  const saved=localStorage.getItem('ag_curDay');
+  if(saved===null) return 1;
+  return Math.max(1,Math.min(parseInt(saved),35));
+}
+
+function saveCurDay(d){
+  localStorage.setItem('ag_curDay',String(d));
+}
+
+function resetDia(){
+  if(confirm('¿Volver al Día 1? No se borran tus tareas completadas.')){
+    localStorage.removeItem('ag_curDay');
+    manualDay=null;
+    rHoy();
+    showToast('↩ Reiniciado al Día 1');
+  }
+}
+
+function resetTodo(){
+  if(confirm('¿Borrar TODO el progreso y volver al inicio? Esto no se puede deshacer.')){
+    localStorage.removeItem('ag_curDay');
+    localStorage.removeItem('ag_s');
+    localStorage.removeItem('ag_m');
+    localStorage.removeItem('ag_n');
+    S={};M={};N={};
+    manualDay=null;
+    rHoy();
+    showToast('🔄 Todo reiniciado');
+  }
+}
+
+function rHoy(){
+  const curD=manualDay!==null?manualDay:getCurrentDayNum();
+
+  // Tareas del día actual
+  const tareasDelDia=getAllTasks().filter(t=>t.d===curD);
+
+  // Tareas pendientes/en proceso de días ANTERIORES (arrastradas)
+  const diasAnteriores=getAllTasks().filter(t=>t.d<curD && !done(t));
+
+  const f=tareasDelDia[0]?.f||'';
+  const total=getAllTasks().length;
+  const totalDone=getAllTasks().filter(done).length;
+  const dayDone=tareasDelDia.filter(done).length;
+  const dayEP=tareasDelDia.filter(enProceso).length;
+  const pendAnt=diasAnteriores.length;
+  const pct=tareasDelDia.length?Math.round(dayDone/tareasDelDia.length*100):0;
+  const globalPct=Math.round(totalDone/total*100);
+
+  document.getElementById('tDay').textContent=`Día ${curD} de 35`;
+  document.getElementById('tFase').textContent=f;
+  document.getElementById('hDay').textContent=`Día ${curD}/35`;
+  document.getElementById('tPct').textContent=pct+'%';
+  document.getElementById('hPct').textContent=globalPct+'%';
+
+  // Ordenar tareas del día: EP primero, luego pendientes, luego hechas
+  const epHoy=tareasDelDia.filter(t=>enProceso(t));
+  const pendHoy=tareasDelDia.filter(t=>!done(t)&&!enProceso(t));
+  const doneHoy=tareasDelDia.filter(t=>done(t));
+
+  // Construir HTML
+  let html=`
+    <div style="display:flex;gap:6px;margin-bottom:14px;align-items:center;flex-wrap:wrap;">
+      <button class="bsm" onclick="changeDay(-1)" ${curD<=1?'disabled style="opacity:.3"':''}>← Día ant</button>
+      <button class="bsm" onclick="changeDay(1)" ${curD>=35?'disabled style="opacity:.3"':''}>Día sig →</button>
+      ${dayEP>0?`<span style="font-size:11px;padding:3px 10px;background:rgba(100,149,237,0.2);border-radius:10px;color:#7ab4f0;">🔄 ${dayEP} en proceso</span>`:''}
+      <span style="font-size:11px;padding:3px 10px;background:rgba(255,255,255,0.06);border-radius:10px;color:var(--soft);">${dayDone}/${tareasDelDia.length} hechas hoy</span>
+    </div>`;
+
+  // Si hay pendientes de días anteriores, mostrarlas primero con sección especial
+  if(pendAnt>0){
+    const epAnt=diasAnteriores.filter(t=>enProceso(t));
+    const pendSoloAnt=diasAnteriores.filter(t=>!enProceso(t));
+
+    var pendLabel=pendAnt>1?'tareas':'tarea';
+    html+='<div class="tg"><div class="gh" style="color:#f0c040;border-bottom-color:rgba(240,192,64,0.3);">⏳ Pendientes anteriores<span class="gc" style="background:rgba(240,192,64,0.15);color:#f0c040;">'+pendAnt+' '+pendLabel+'</span></div>';
+
+    // EP de días anteriores primero
+    epAnt.forEach(t=>{
+      html+=rTIConDia(t);
+    });
+    pendSoloAnt.forEach(t=>{
+      html+=rTIConDia(t);
+    });
+    html+='</div>';
+  }
+
+  // Tareas del día actual
+  html+=rGrps([...epHoy,...pendHoy,...doneHoy]);
+
+  document.getElementById('hoyC').innerHTML=html;
+}
+
+function rTIConDia(t){
+  return rTI(t);
+}
+
+function changeDay(offset){
+  const cur=manualDay!==null?manualDay:getCurrentDayNum();
+  const newD=Math.max(1,Math.min(35,cur+offset));
+  manualDay=newD;
+  saveCurDay(newD);
+  rHoy();
+}
+
+let manualDay=null;
+
+function sortTasks(ts){
+  // En proceso primero, luego mañana+pendientes, luego hechas
+  const ep=ts.filter(t=>enProceso(t));
+  const pend=ts.filter(t=>!done(t)&&!enProceso(t));
+  const dn2=ts.filter(t=>done(t));
+  return [...ep,...pend,...dn2];
+}
+function rGrps(ts){
+  const c=sortTasks(ts.filter(t=>t.r==='CEO'));
+  const dv=sortTasks(ts.filter(t=>t.r==='DEV'));
+  let h='';
+  if(c.length){
+    const dc=c.filter(done).length;
+    const ep=c.filter(enProceso).length;
+    h+=`<div class="tg"><div class="gh">🎩 CEO <span class="gc">${ep>0?`🔄${ep} · `:''}${dc}/${c.length}</span></div>`;
+    c.forEach(t=>{h+=rTI(t);});
+    h+='</div>';
+  }
+  if(dv.length){
+    const dc=dv.filter(done).length;
+    const ep=dv.filter(enProceso).length;
+    h+=`<div class="tg"><div class="gh">💻 Dev <span class="gc">${ep>0?`🔄${ep} · `:''}${dc}/${dv.length}</span></div>`;
+    dv.forEach(t=>{h+=rTI(t);});
+    h+='</div>';
+  }
+  return h||'<div class="empty">Sin tareas 🌿</div>';
+}
+
+function rTI(t){
+  const k=tk(t);
+  const est=getEst(t);
+  const isDn=est==='dn';
+  const isEP=est==='ep';
+  const nt=N[k]||'';
+  const star=t.t.startsWith('⭐');
+  const man=t.m===true;
+  const isAlta=t.p==='Alta'&&!isDn&&!isEP;
+  const ks=k.replace(/'/g,"\'");
+  return `<div class="ti ${isDn?'dn':''} ${isEP?'enproceso':''} ${man&&!isDn&&!isEP?'manana':''} ${isAlta?'alta':''}">
+    <div class="tb2">
+      <div class="tn">${t.t}</div>
+      <div class="tags">
+        <span class="tag ${t.r==='CEO'?'tc':'td'}">${t.r}</span>
+        <span class="tag ${t.p==='Alta'?'ta':'tm'}">${t.p}</span>
+        ${star?'<span class="tag ts">⭐ Clave</span>':''}${t.custom?'<span class="tag tag-custom">✏️ Personalizada</span>':''}
+        ${man&&!isDn&&!isEP?'<span class="tag tag-m">🌅 Mañana</span>':''}
+        ${isEP?'<span class="tag tag-ep">🔄 En proceso</span>':''}
+        ${isDn?'<span class="tag" style="background:rgba(74,222,128,0.18);color:var(--menta);">✅ Hecha</span>':''}
+      </div>
+      <div class="estado-btns">
+        <button class="ebtn ${est===''?'ebtn-p':''}" onclick="setEst('${ks}','')">Pendiente</button>
+        <button class="ebtn ${isEP?'ebtn-ep':''}" onclick="setEst('${ks}','ep')">🔄 En proceso</button>
+        <button class="ebtn ${isDn?'ebtn-dn':''}" onclick="setEst('${ks}','dn')">✅ Hecha</button>
+      </div>
+      ${nt?`<div class="nt">📝 ${nt}</div>`:''}
+    </div>
+    <button class="nb" onclick="openNote('${ks}','${t.t.slice(0,40).replace(/'/g,"\'")}')">✏️</button>
+  </div>`;
+}
+
+let calPage=0; // 0=semana1, 1=semana2, etc
+function pMo(){calPage=Math.max(0,calPage-1);rCal();}
+function nMo(){calPage=Math.min(4,calPage+1);rCal();}
+function gNow(){const cur=getCurrentDayNum();calPage=Math.floor((cur-1)/7);rCal();}
+
+function rCal(){
+  // Mostrar días del 1 al 35 agrupados en semanas de 7
+  var semanas=['Sem 1 (Días 1-7)','Sem 2 (Días 8-14)','Sem 3 (Días 15-21)','Sem 4 (Días 22-28)','Sem 5 (Días 29-35)'];
+  document.getElementById('calTit').textContent=semanas[calPage]||'';
+
+  var g=document.getElementById('calG');
+  var heads=g.querySelectorAll('.ch');
+  g.innerHTML='';
+  heads.forEach(function(h){g.appendChild(h);});
+
+  var startDay=calPage*7+1;
+  var endDay=Math.min(startDay+6,35);
+  var curD=manualDay!==null?manualDay:getCurrentDayNum();
+
+  // Rellenar días vacíos al inicio para alinear con la semana
+  for(var i=0;i<(startDay-1)%7;i++){
+    var empty=document.createElement('div');
+    empty.className='cc ci';
+    g.appendChild(empty);
+  }
+
+  for(var d=startDay;d<=endDay;d++){
+    var tasks=getAllTasks().filter(function(t){return t.d===d;});
+    var doneTasks=tasks.filter(done);
+    var isCur=d===curD;
+    var pct=tasks.length?Math.round(doneTasks.length/tasks.length*100):0;
+    var bg=getFaseBg(tasks[0]?tasks[0].f:'');
+
+    var cell=document.createElement('div');
+    cell.className='cc'+(isCur?' ct':'')+(tasks.length===0?' cn':'');
+
+    var inner='<div class="cn2">'+d+'</div>';
+    if(tasks[0]){
+      inner+='<div class="cbdg" style="background:'+bg+'22;color:'+bg+';font-size:9px;">'+tasks[0].f.split('·')[0].trim()+'</div>';
+    }
+    if(tasks.length){
+      inner+='<div class="ctc">'+doneTasks.length+'/'+tasks.length+'</div>';
+      inner+='<div class="cmp"><div class="cmf" style="width:'+pct+'%;background:'+(pct===100?'#4ADE80':bg)+'"></div></div>';
+    }
+    cell.innerHTML=inner;
+
+    if(tasks.length>0){
+      (function(day,ts){
+        cell.onclick=function(){oDM('Día '+day,ts);};
+      })(d,tasks);
+    }
+    g.appendChild(cell);
+  }
+
+  // Rellenar celdas vacías al final para completar la fila
+  var total=endDay-startDay+1;
+  var offset=(startDay-1)%7;
+  var remaining=(7-((total+offset)%7))%7;
+  for(var j=0;j<remaining;j++){
+    var empty2=document.createElement('div');
+    empty2.className='cc ci';
+    g.appendChild(empty2);
+  }
+}
+
+function getFaseBg(f){
+  if(!f) return '#8aab9a';
+  if(f.indexOf('1')>-1) return '#4ADE80';
+  if(f.indexOf('2')>-1) return '#C9A84C';
+  if(f.indexOf('3')>-1) return '#6495ed';
+  if(f.indexOf('4')>-1) return '#FF6B6B';
+  return '#d47ad4';
+}
+
+function oDM(label,ts){
+  var f=ts[0]?ts[0].f:'';
+  var dc=ts.filter(done).length;
+  var fclass=fc(f);
+  document.getElementById('mTit').textContent=label;
+  document.getElementById('mBod').innerHTML=
+    '<div style="display:flex;gap:7px;margin-bottom:12px;flex-wrap:wrap;">'
+    +'<span class="tag '+fclass+'" style="font-size:11px;">'+f+'</span>'
+    +'<span style="font-size:11px;padding:2px 8px;background:rgba(255,255,255,.06);border-radius:6px;color:#8aab9a;">'+dc+'/'+ts.length+' completadas</span>'
+    +'</div>'+rGrps(ts);
+  document.getElementById('ov').classList.add('on');
+}
+
+function setF(f,el){fil=f;document.querySelectorAll('.fbtn').forEach(b=>b.classList.remove('on'));el.classList.add('on');rList();}
+
+function rList(){let ts=[...getAllTasks()];if(fil==='CEO')ts=ts.filter(t=>t.r==='CEO');if(fil==='DEV')ts=ts.filter(t=>t.r==='DEV');if(fil==='p')ts=ts.filter(t=>!done(t)&&!enProceso(t));if(fil==='d')ts=ts.filter(t=>done(t));if(fil==='m')ts=ts.filter(t=>t.m===true);if(fil==='ep')ts=ts.filter(t=>enProceso(t));const bd={};ts.forEach(t=>{if(!bd[t.d])bd[t.d]=[];bd[t.d].push(t);});const days=Object.keys(bd).sort((a,b)=>+a-+b);let h='';if(!days.length)h='<div class="empty">Sin tareas con este filtro 🌿</div>';days.forEach(d=>{const ts2=bd[d];const dt=ts2[0].dt;const f=ts2[0].f;const dc=ts2.filter(done).length;h+=`<div class="tg"><div class="gh"><span>Día ${d} · ${fd(dt)}</span><span style="display:flex;gap:5px;align-items:center;"><span class="tag ${fc(f)}" style="font-size:9px;">${f}</span><span class="gc">${dc}/${ts2.length}</span></span></div>`;ts2.forEach(t=>{h+=rTI(t);});h+='</div>';});document.getElementById('listC').innerHTML=h;}
+
+function rMet(){['k1','k2','k3','k4','k5','k6','k7','k8'].forEach(k=>{const el=document.getElementById(k);if(el&&M[k]!==undefined)el.value=M[k];});const al=getAllTasks().length,dc=getAllTasks().filter(done).length;const p=Math.round(dc/al*100);document.getElementById('mPct').textContent=p+'%';document.getElementById('mFill').style.width=p+'%';document.getElementById('mTar').textContent=`${dc}/${al} tareas`;}
+
+let curK='';
+function openNote(k,nm){curK=k;document.getElementById('mTit').textContent='Nota';document.getElementById('mBod').innerHTML=`<div style="font-size:12px;color:var(--soft);margin-bottom:6px;">${nm}...</div><textarea class="nta" id="nInp" placeholder="Contexto, resultado, obstáculo...">${N[k]||''}</textarea><button class="sb" onclick="doNote()">Guardar</button>`;document.getElementById('ov').classList.add('on');}
+
+// ─── AGREGAR TAREA PERSONALIZADA ───
+let customTasks=[];
+function loadCustom(){try{customTasks=JSON.parse(localStorage.getItem('ag_custom')||'[]');}catch(e){customTasks=[];}}
+function saveCustom(){localStorage.setItem('ag_custom',JSON.stringify(customTasks));}
+
+function openAddTask(){
+  const curD=manualDay!==null?manualDay:getCurrentDayNum();
+  document.getElementById('mTit').textContent='Nueva tarea';
+  var opts='';
+  for(var i=1;i<=35;i++) opts+='<option value="'+i+'"'+(i===curD?' selected':'')+'>Día '+i+'</option>';
+  document.getElementById('mBod').innerHTML=
+    '<div class="form-group"><label class="form-label">Descripción</label>'
+    +'<textarea class="nta" id="newTaskTxt" placeholder="¿Qué hay que hacer?" style="min-height:80px;"></textarea></div>'
+    +'<div class="form-group"><label class="form-label">Día</label>'
+    +'<select class="form-select" id="newTaskDay">'+opts+'</select></div>'
+    +'<div class="form-group"><label class="form-label">Rol</label>'
+    +'<select class="form-select" id="newTaskRol">'
+    +'<option value="CEO">🎩 CEO (Evelyn)</option>'
+    +'<option value="DEV">💻 Dev</option></select></div>'
+    +'<div class="form-group"><label class="form-label">Prioridad</label>'
+    +'<select class="form-select" id="newTaskPri">'
+    +'<option value="Alta">🔴 Alta</option>'
+    +'<option value="Media">🟡 Media</option>'
+    +'<option value="Baja">⚪ Baja</option></select></div>'
+    +'<div class="form-group"><label class="form-label">¿Tarea de mañana?</label>'
+    +'<select class="form-select" id="newTaskMan">'
+    +'<option value="0">No</option>'
+    +'<option value="1">Sí 🌅</option></select></div>'
+    +'<button class="sb" onclick="saveNewTask()">Agregar tarea</button>';
+  document.getElementById('ov').classList.add('on');
+}
+
+function saveNewTask(){
+  const txt=document.getElementById('newTaskTxt')?.value?.trim();
+  if(!txt){showToast('⚠️ Escribe la tarea');return;}
+  const d=parseInt(document.getElementById('newTaskDay').value);
+  const r=document.getElementById('newTaskRol').value;
+  const p=document.getElementById('newTaskPri').value;
+  const man=document.getElementById('newTaskMan').value==='1';
+  // Determinar fase según el día
+  const fases={1:'Fase 1 · Rescate',2:'Fase 1 · Rescate',3:'Fase 1 · Rescate',
+    4:'Fase 2 · Conversión',5:'Fase 2 · Conversión',6:'Fase 2 · Conversión',
+    7:'Fase 2 · Conversión',8:'Fase 2 · Conversión',9:'Fase 2 · Conversión',10:'Fase 2 · Conversión',
+    11:'Fase 3 · Amplificación',12:'Fase 3 · Amplificación',13:'Fase 3 · Amplificación',
+    14:'Fase 3 · Amplificación',15:'Fase 3 · Amplificación',16:'Fase 3 · Amplificación',
+    17:'Fase 3 · Amplificación',18:'Fase 3 · Amplificación',19:'Fase 3 · Amplificación',20:'Fase 3 · Amplificación',
+    21:'Fase 4 · B2B',22:'Fase 4 · B2B',23:'Fase 4 · B2B',24:'Fase 4 · B2B',
+    25:'Fase 4 · B2B',26:'Fase 4 · B2B',27:'Fase 4 · B2B',28:'Fase 4 · B2B',
+    29:'Fase 5 · Cierre',30:'Fase 5 · Cierre',31:'Fase 5 · Cierre',32:'Fase 5 · Cierre',
+    33:'Fase 5 · Cierre',34:'Fase 5 · Cierre',35:'Fase 5 · Cierre'};
+  const newTask={d,dt:'custom',f:fases[d]||'Fase 1 · Rescate',r,p,t:txt,m:man,custom:true};
+  customTasks.push(newTask);
+  saveCustom();
+  closeM();
+  showToast('✅ Tarea agregada al Día '+d);
+}
+
+function getAllTasks(){
+  return [...T,...customTasks];
+}
+function doNote(){const v=document.getElementById('nInp')?.value||'';sN(curK,v);closeM();showToast('📝 Nota guardada');}
+
+function deleteCustom(ks,day){
+  if(!confirm('¿Eliminar esta tarea?')) return;
+  customTasks=customTasks.filter(function(t){return !(t.d===day&&tk(t)===ks);});
+  saveCustom();
+  rf();
+  showToast('🗑 Tarea eliminada');
+}
+function mClose(e){if(e.target===document.getElementById('ov'))closeM();}
+function closeM(){document.getElementById('ov').classList.remove('on');rf();}
+
+function showToast(m){const el=document.getElementById('toast');el.textContent=m;el.classList.add('on');setTimeout(()=>el.classList.remove('on'),2000);}
+
+function rf(){const v=document.querySelector('.view.on')?.id?.replace('v-','');if(v==='hoy')rHoy();if(v==='cal')rCal();if(v==='list')rList();if(v==='met')rMet();const t=td();const n=Math.max(1,Math.min(dn(t),35));document.getElementById('hDay').textContent=`Día ${n}/35`;const al=getAllTasks().length,dc=getAllTasks().filter(done).length;document.getElementById('hPct').textContent=Math.round(dc/al*100)+'%';}
+
+// ─── EXPORTAR / IMPORTAR RESPALDO ───
+function exportJSON(){
+  const data={
+    s:S, m:M, n:N, custom:customTasks,
+    curDay:localStorage.getItem('ag_curDay'),
+    exportDate:new Date().toISOString(),
+    version:'1.0'
+  };
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  const fecha=new Date().toISOString().slice(0,10);
+  a.href=url;
+  a.download=`arch_garden_respaldo_${fecha}.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  showToast('💾 Respaldo descargado');
+}
+
+function importJSON(e){
+  const f=e.target.files[0];
+  if(!f) return;
+  if(!confirm('¿Reemplazar tu progreso actual con el del respaldo? Esto sobrescribirá lo que tengas guardado.')){
+    e.target.value='';
+    return;
+  }
+  const reader=new FileReader();
+  reader.onload=function(ev){
+    try{
+      const data=JSON.parse(ev.target.result);
+      if(data.s) localStorage.setItem('ag_s',JSON.stringify(data.s));
+      if(data.m) localStorage.setItem('ag_m',JSON.stringify(data.m));
+      if(data.n) localStorage.setItem('ag_n',JSON.stringify(data.n));
+      if(data.custom) localStorage.setItem('ag_custom',JSON.stringify(data.custom));
+      if(data.curDay) localStorage.setItem('ag_curDay',data.curDay);
+      ld();
+      rf();
+      showToast('✅ Respaldo restaurado');
+    }catch(err){
+      showToast('⚠️ Archivo inválido');
+    }
+  };
+  reader.readAsText(f);
+  e.target.value='';
+}
+
+ld();rHoy();rCal();
+</script>
+</body>
+</html>
